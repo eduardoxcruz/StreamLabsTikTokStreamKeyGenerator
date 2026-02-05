@@ -385,13 +385,14 @@ class StreamApp(QMainWindow):
         # Loop through files and search for the token pattern
         for file in files:
             try:
-                with open(file, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
-                    matches = token_pattern.findall(content)
-                    if matches:
-                        # Get the last occurrence of the token
-                        token = matches[-1]
-                        break
+                with open(file, 'rb') as f:
+                    content = f.read().decode('utf-8', errors='ignore')
+                content = re.sub(r'[\x00]', '', content)
+                matches = token_pattern.findall(content)
+                if matches:
+                    # Get the last occurrence of the token
+                    token = matches[-1]
+                    break
             except Exception as e:
                 QMessageBox.critical("Error", f"Error reading file {file}: {e}")
         if token:
